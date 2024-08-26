@@ -1,24 +1,17 @@
 package com.commerce.product.product.dto;
 
 import com.commerce.product.product.domain.Product;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
-import java.util.List;
-
-public class CreateProduct {
+public class UpdateProduct {
 
     @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @ToString
     public static class Request {
         private String productName;
         private Long categoryId;
         private String description;
-
-        private List<CreateOption.Request> options;
-        private List<CreateOptionCombination.Request> optionCombinations;
-
     }
 
     @Getter

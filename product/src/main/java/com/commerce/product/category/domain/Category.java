@@ -6,6 +6,8 @@ import com.commerce.product.common.aduit.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Getter
 @Entity
 @NoArgsConstructor
@@ -19,7 +21,7 @@ public class Category extends BaseEntity {
     private Long id;
 
     private String name;
-    private Double feeRate;
+    private BigDecimal feeRate;
     private Long parentCategoryId;
 
     @Enumerated(value = EnumType.STRING)
