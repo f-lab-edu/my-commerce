@@ -5,20 +5,16 @@ import lombok.*;
 
 import java.util.List;
 
-public class CreateProduct {
+public class CreateOption {
 
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
     @ToString
     public static class Request {
-        private String productName;
-        private Long categoryId;
-        private String description;
+        private String optionName;
 
-        private List<CreateOption.Request> options;
-        private List<CreateOptionCombination.Request> optionCombinations;
-
+        private List<CreateOptionValue.Request> optionValues;
     }
 
     @Getter

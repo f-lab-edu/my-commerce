@@ -3,6 +3,8 @@ package com.commerce.product.category.dto;
 import com.commerce.product.category.domain.Category;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 public class CreateCategory {
 
     @Getter
@@ -13,7 +15,7 @@ public class CreateCategory {
     public static class Request {
         private long parentCategoryId;
         private String name;
-        private Double feeRate;
+        private BigDecimal feeRate;
     }
 
     @Getter
