@@ -3,7 +3,6 @@ package com.commerce.product.product.controller;
 import com.commerce.product.image.ImageDto;
 import com.commerce.product.image.ImageStore;
 import com.commerce.product.product.dto.CreateProduct;
-import com.commerce.product.product.dto.UpdateProduct;
 import com.commerce.product.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,15 +32,11 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{productId}")
-    public ResponseEntity<?> getProduct(@PathVariable("productId") Long productId) {
+    @GetMapping("/{product-id}")
+    public ResponseEntity<?> getProduct(@PathVariable("product-id") Long productId) {
+        log.info("상품 상세 조회 - {}", productId);
 
-        return ResponseEntity.ok(productService.getProductDetail(productId));
+        return ResponseEntity.ok(productService.findProduct(productId));
     }
 
-    @PatchMapping("/{productId}")
-    public ResponseEntity<?> updateProduct(@RequestBody UpdateProduct.Request request) {
-
-        return ResponseEntity.ok(productService.updateProduct(request));
-    }
 }
