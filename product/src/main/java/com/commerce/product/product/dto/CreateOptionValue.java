@@ -3,8 +3,6 @@ package com.commerce.product.product.dto;
 import com.commerce.product.product.domain.Product;
 import lombok.*;
 
-import java.util.List;
-
 public class CreateOptionValue {
     @Getter
     @NoArgsConstructor

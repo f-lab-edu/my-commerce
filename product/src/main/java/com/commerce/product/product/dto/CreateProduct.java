@@ -8,8 +8,6 @@ import java.util.List;
 public class CreateProduct {
 
     @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
     @ToString
     public static class Request {
         private String productName;
@@ -22,11 +20,16 @@ public class CreateProduct {
     }
 
     @Getter
+    @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     @Builder
     public static class Response {
+        private String name;
+
         public static Response from(Product product) {
             return Response.builder()
+                    .name(product.getName())
                     .build();
         }
     }
