@@ -1,11 +1,12 @@
 package com.commerce.product.product.domain;
 
-import com.commerce.product.product.dto.CreateOptionValue;
-import jakarta.persistence.*;
-import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.commerce.product.product.dto.CreateOptionValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.*;
 
 @Getter
 @Setter
@@ -19,20 +20,7 @@ public class OptionValue {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long optionValueId;
-
     private String optionValue;
-
-/*    @Builder.Default
-    @OneToMany
-    private List<OptionCombinationValue> optionCombinationValues = new ArrayList<>();*/
-
-    @ManyToOne
-    @JoinColumn(name = "option_id")
-    private Option option;
-
-    public boolean isOptionValue(String value) {
-        return optionValue.equals(value);
-    }
 
     public static OptionValue of(CreateOptionValue.Request optionValueDto) {
         return OptionValue.builder()

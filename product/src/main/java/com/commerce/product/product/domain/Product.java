@@ -1,78 +1,76 @@
 package com.commerce.product.product.domain;
 
+import com.commerce.product.common.aduit.BaseEntity;
 import com.commerce.product.image.ImageDto;
 import com.commerce.product.product.dto.CreateProduct;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Product {
+@ToString
+public class Product extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
-    private String name;
     private Long categoryId;
+    private String name;
     private String description;
 
-/*
     @Builder.Default
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "product_id", nullable = false, updatable = false)
     private List<Option> options = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "product_id", nullable = false, updatable = false)
     private List<OptionCombination> optionCombinations = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> images = new ArrayList<>();
-*/
-/*
 
-    public static Product of(CreateProduct.Request request, List<ImageDto> images) {
-        List<OptionValue> optionValueList = new ArrayList<>();
-
-        List<Option> optionList = request.getOptions().stream()
-                .map(o -> Option.of(o))
-                .toList();
-
-        optionList.forEach(o -> optionValueList.addAll(o.getOptionValues()));
-
-        List<OptionCombination> optionCombinationList = request.getOptionCombinations().stream()
-                .map(o -> OptionCombination.of(o, optionValueList))
-                .toList();
-
-        List<ProductImage> productImages = images.stream()
-                .map(i -> ProductImage.of(i))
-                .toList();
-
-        //TODO: Images도 파일저장 확인하고 DB에 어떻게 할지 생각해야함
-
-        return Product.builder()
-                .name(request.getProductName())
-                .categoryId(request.getCategoryId())
-                .description(request.getDescription())
-//                .options(optionList)
-//                .optionCombinations(optionCombinationList)
-//                .images(productImages)
-                .build();
+    public void addOption(Option option) {
+        options.add(option);
     }
-*/
 
-    public static Product of(CreateProduct.Request request) {
-        return Product.builder()
-                .name(request.getProductName())
-                .categoryId(request.getCategoryId())
-                .description(request.getDescription())
+    public void addOptionCombination(OptionCombination optionCombination) {
+        optionCombinations.add(optionCombination);
+    }
+
+    public void addProductImage(ProductImage image) {
+        images.add(image);
+        image.setProduct(this);
+    }
+
+    public static Product of(CreateProduct.Request productDto, List<ImageDto> images) {
+        Product product = Product.builder()
+                .name(productDto.getProductName())
+                .categoryId(productDto.getCategoryId())
+                .description(productDto.getDescription())
                 .build();
+
+        // 옵션 세팅
+        productDto.getOptions()
+                .forEach(o -> product.addOption(Option.of(o)));
+        // 모든 옵션값 추출
+        List<OptionValue> optionValueList = product.getOptions().stream()
+                .flatMap(o -> o.getOptionValues().stream())
+                .toList();
+        // 옵션조합 세팅
+        productDto.getOptionCombinations()
+                .forEach(o -> product.addOptionCombination(OptionCombination.of(o, optionValueList)));
+        // 이미지 세팅
+        images.forEach(i -> product.addProductImage(ProductImage.of(i)));
+
+        return product;
     }
 }

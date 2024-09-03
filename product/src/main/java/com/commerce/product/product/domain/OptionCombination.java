@@ -6,7 +6,6 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -14,7 +13,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-//@ToString
+@ToString
 public class OptionCombination {
 
     @Id
@@ -23,33 +22,23 @@ public class OptionCombination {
     private Integer stock;
     private Integer price;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
-
-/*
     @Builder.Default
-    @OneToMany(mappedBy = "optionCombination", cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JoinColumn(name = "option_combination_id")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "option_combination_id", nullable = false, updatable = false)
     private List<OptionCombinationValue> values = new ArrayList<>();
-*/
 
-    public static OptionCombination of(CreateOptionCombination.Request request, List<OptionValue> optionValues) {
-        List<OptionCombinationValue> optionCombinationValueList = request.getOptionCombinationValues().stream()
-                .map(o -> OptionCombinationValue.of(o, optionValues))
-                .collect(Collectors.toList());
-
-        return OptionCombination.builder()
-                .stock(request.getStock())
-                .price(request.getPrice())
-//                .values(optionCombinationValueList)
-                .build();
+    public void addOptionCombinationValue(OptionCombinationValue combinationValue) {
+        values.add(combinationValue);
     }
 
-    public static OptionCombination of(CreateOptionCombination.Request request) {
-        return OptionCombination.builder()
-                .stock(request.getStock())
-                .price(request.getPrice())
-                .build();
+    public static OptionCombination of(CreateOptionCombination.Request combinationDto, List<OptionValue> optionValues) {
+        OptionCombination optionCombination = OptionCombination.builder()
+                .stock(combinationDto.getStock())
+                .price(combinationDto.getPrice()).build();
+
+        combinationDto.getOptionCombinationValues()
+                .forEach(v -> optionCombination.addOptionCombinationValue(OptionCombinationValue.of(v, optionValues)));
+
+        return optionCombination;
     }
 }

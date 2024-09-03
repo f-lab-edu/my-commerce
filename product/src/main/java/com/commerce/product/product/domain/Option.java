@@ -1,13 +1,11 @@
 package com.commerce.product.product.domain;
 
 import com.commerce.product.product.dto.CreateOption;
-import com.commerce.product.product.dto.CreateProduct;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -15,6 +13,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class Option {
 
     @Id
@@ -22,30 +21,23 @@ public class Option {
     private Long optionId;
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @Builder.Default
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "option_id", nullable = false, updatable = false)
+    private List<OptionValue> optionValues = new ArrayList<>();
 
-/*    @Builder.Default
-    @OneToMany(mappedBy = "option", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OptionValue> optionValues = new ArrayList<>();*/
-/*
-
-    public static Option of(CreateOption.Request optionDto, CreateProduct.Request productDto) {
-        List<OptionValue> optionValues = optionDto.getOptionValues().stream()
-                .map(o -> OptionValue.of(o))
-                .collect(Collectors.toList());
-        return Option.builder()
-                .name(optionDto.getOptionName())
-                .optionValues(optionValues)
-                .build();
+    public void addOptionValue(OptionValue optionValue) {
+        optionValues.add(optionValue);
     }
-*/
 
     public static Option of(CreateOption.Request optionDto) {
-        return Option.builder()
+        Option option = Option.builder()
                 .name(optionDto.getOptionName())
                 .build();
-    }
 
+        optionDto.getOptionValues()
+                .forEach(o -> option.addOptionValue(OptionValue.of(o)));
+
+        return option;
+    }
 }
